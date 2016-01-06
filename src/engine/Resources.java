@@ -1,5 +1,6 @@
+package engine;
+
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Resources {
@@ -41,23 +42,23 @@ public class Resources {
 		return foundElements;
 	}
 
-	public boolean takeResources(Resources intake, Resources dest){
+	public int takeResources(Resources intake, Resources dest){
 
-		boolean starved = false;
+		int deficit = 0;
 
 		for (int i = 0; i < numResources; i++){
 
 			if (getResourceAt(i) < intake.getResourceAt(i)){
 				dest.addResourceAt(i, getResourceAt(i));
+				deficit += (dest.getResourceAt(i) - getResourceAt(i));
 				setResourceAt(i, 0);
-				starved = true;
 			}
 			else {
 				subtractResourceAt(i, intake.getResourceAt(i));
 				dest.addResourceAt(i, intake.getResourceAt(i));
 			}
 		}
-		return starved;
+		return deficit;
 	}
 
 	public void giveResources(Resources given){

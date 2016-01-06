@@ -1,3 +1,5 @@
+package engine;
+
 import java.util.ArrayList;
 
 public class Ecosystem {
@@ -8,6 +10,8 @@ public class Ecosystem {
 	private int width;
 	private int height;
 	private int age;
+	private int newestGen;
+	private int oldestGen;
 	private ArrayList<Plant> plants;
 
 	public Ecosystem(Resources resources, int temperature, int dayLength, int changeRate) {
@@ -15,6 +19,7 @@ public class Ecosystem {
 		this.dayLength = dayLength;
 		this.resources = resources;
 		this.changeRate = changeRate;
+		oldestGen = 1;
 		plants = new ArrayList<Plant>();
 	}
 
@@ -27,7 +32,7 @@ public class Ecosystem {
 			age++;
 			return true;
 		}
-		System.out.println("Ecosystem has failed!");
+		System.out.println("engine.Ecosystem has failed!");
 		return false;
 	}
 
@@ -36,6 +41,10 @@ public class Ecosystem {
 		try {
 			if (!plants.isEmpty()) {
 				for (int i = 0; i < plants.size(); i++) {
+					if (plants.size() == 1){
+						System.out.println(plants.get(i).getDna());
+					}
+					checkGen(plants.get(i));
 					plants.get(i).age(this);
 				}
 			}
@@ -49,15 +58,24 @@ public class Ecosystem {
 
 		if (age % changeRate == 0) {
 			temperature += (Math.random() * 3) - 1;
-			System.out.println("Temperature: " + temperature + " degrees celsius.");
 		}
 	}
 
 	private void changeLight(){
 
 		lightLevel= Math.abs((age % dayLength) - dayLength/2);
+		lightLevel = (lightLevel * 100) / (dayLength/2);
 	}
+	private void checkGen(Plant plant) {
 
+		int gen = plant.getDna().getGeneration();
+
+		if (gen < oldestGen) {
+			oldestGen = gen;
+		} else if (gen > newestGen) {
+			newestGen = gen;
+		}
+	}
 	public Resources getResources() {
 		return resources;
 	}
@@ -87,6 +105,9 @@ public class Ecosystem {
 
 	public void removePlant(Plant plant){
 
+		if (plant.getDna().getGeneration() == oldestGen){
+			oldestGen = newestGen;
+		}
 		plants.remove(plant);
 	}
 
@@ -113,6 +134,20 @@ public class Ecosystem {
 	}
 
 	public int getAge() {
+
 		return age;
+
+	}
+
+	public int getDayLength() {
+		return dayLength;
+	}
+
+	public int getOldestGen() {
+		return oldestGen;
+	}
+
+	public int getNewestGen() {
+		return newestGen;
 	}
 }

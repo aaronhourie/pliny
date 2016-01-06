@@ -1,10 +1,11 @@
-import java.util.ArrayList;
+package engine;
 
 public class DNA {
 
 	private Resources intake;
-	private int starvThresh, lightThresh, darkThresh, hotThresh, coldThresh;
+	private int starvThresh, lightThresh, darkThresh, hotThresh, coldThresh, resourceThresh;
 	private int growthRate, maturity;
+	private int generation;
 	private static int mutationRate = 5;
 
 	public DNA(DNA parent){
@@ -17,12 +18,16 @@ public class DNA {
 		this.coldThresh = parent.coldThresh;
 		this.growthRate = parent.growthRate;
 		this.maturity = parent.maturity;
+		this.resourceThresh = parent.resourceThresh;
+		this.generation = parent.generation + 1;
 
 		mutate();
 	}
 
 	public DNA(Resources intake, int starvThresh, int lightThresh, int darkThresh,
-	           int hotThresh, int coldThresh, int growthRate, int maturity) {
+	           int hotThresh, int coldThresh, int growthRate, int maturity, int resourceThresh) {
+
+		generation = 0;
 
 		this.intake = intake;
 		this.starvThresh = starvThresh;
@@ -32,6 +37,7 @@ public class DNA {
 		this.coldThresh = coldThresh;
 		this.growthRate = growthRate;
 		this.maturity = maturity;
+		this.resourceThresh = resourceThresh;
 	}
 
 	public void mutate() {
@@ -60,6 +66,8 @@ public class DNA {
 			case "maturity":
 				maturity += randomMutation();
 				break;
+			case "resourceThresh":
+				resourceThresh += randomMutation();
 			case "intake":
 			default:
 				mutateIntake();
@@ -71,7 +79,7 @@ public class DNA {
 
 		// Base number of genes
 		// Intakes count as 1 gene. int numGenes = 8;
-		int numGenes = 8;
+		int numGenes = 9;
 		String gene;
 
 		int geneNum = (int)(Math.random() * numGenes);
@@ -84,6 +92,7 @@ public class DNA {
 			case 5: gene = "coldThresh"; break;
 			case 6: gene = "growthRate"; break;
 			case 7: gene = "maturity"; break;
+			case 8: gene = "resourceThresh"; break;
 			case 0:
 			default: gene = "intake"; break;
 		}
@@ -123,6 +132,10 @@ public class DNA {
 		}
 	}
 
+	public int getResourceThresh() {
+		return resourceThresh;
+	}
+
 	public Resources getIntake() {
 		return intake;
 	}
@@ -155,9 +168,13 @@ public class DNA {
 		return maturity;
 	}
 
+	public int getGeneration() {
+		return generation;
+	}
+
 	@Override
 	public String toString() {
-		return "DNA{" +
+		return "engine.DNA{" +
 						       "intake=" + intake +
 						       ", starvThresh=" + starvThresh +
 						       ", lightThresh=" + lightThresh +

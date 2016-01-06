@@ -1,12 +1,16 @@
+package gui;
+
+import engine.Ecosystem;
+import engine.Plant;
+
 import javax.swing.*;
 import java.awt.*;
-import java.util.Random;
 
-public class EcosystemPanel extends JPanel {
+public class SimulationPane extends JPanel {
 
 	private Ecosystem ecosystem;
 
-	public EcosystemPanel(Ecosystem ecosystem){
+	public SimulationPane(Ecosystem ecosystem){
 
 		super();
 		this.ecosystem = ecosystem;
@@ -21,7 +25,7 @@ public class EcosystemPanel extends JPanel {
 		for (int i = 0; i < ecosystem.size(); i++){
 			Plant curr = ecosystem.getPlantAt(i);
 			g.setColor(Color.decode(getPlantColor(curr)));
-			g.fillRect(curr.getLocation(), getHeight() - 5*curr.getHeight(), 5, 5*curr.getHeight());
+			g.fillRect(curr.getLocation(), getHeight() - 5*curr.getHeight(), 5, 10*curr.getHeight());
 		}
 	}
 
@@ -39,7 +43,7 @@ public class EcosystemPanel extends JPanel {
 
 		String color = "#";
 		int[] rgb = getTemperatureColor();
-		rgb = addLightColor(rgb);
+		//rgb = addLightColor(rgb);
 
 		for (int i = 0; i < rgb.length; i++){
 			color += Integer.toHexString(rgb[i]);
@@ -88,12 +92,14 @@ public class EcosystemPanel extends JPanel {
 
 		for (int i = 0; i < rgb.length; i++){
 
-			rgb[i] += ecosystem.getLightLevel() / 5;
+			int light = (ecosystem.getLightLevel() * 0xAA / (ecosystem.getDayLength()/2));
+			light -= 0xAA;
+			rgb[i] += light;
 
-			if (rgb[i] > 0xFF){
-				rgb[i] = 0xFF;
+			if (rgb[i] > 0xF0){
+				rgb[i] = 0xF0;
 			}
-			else if (rgb[i] < 0x10){
+			else if (rgb[i] < 0x10) {
 				rgb[i] = 0x10;
 			}
 		}

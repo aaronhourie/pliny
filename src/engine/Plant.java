@@ -1,3 +1,5 @@
+package engine;
+
 public class Plant {
 
 	private Resources resources;
@@ -38,12 +40,13 @@ public class Plant {
 
 	private void checkResources(Ecosystem ecosystem){
 
-			if (age % dna.getGrowthRate() == 0) {
+		if (age % dna.getGrowthRate() == 0) {
 			// If the plant successfully draws resources
-			if (!ecosystem.getResources().takeResources(dna.getIntake(), resources)){
+			int deficit  = ecosystem.getResources().takeResources(dna.getIntake(), resources);
+			if (deficit < dna.getResourceThresh()){
 				// Grow the plant.
 				if (starvation > 0) {
-					starvation--;
+					starvation-=2;
 				}
 				else {
 					height++;
@@ -53,7 +56,7 @@ public class Plant {
 				// Starve the plant.
 				starvation++;
 				if (starvation > dna.getStarvThresh()) {
-					// Plant dies.
+					// engine.Plant dies.
 				}
 			}
 		}
@@ -62,20 +65,32 @@ public class Plant {
 	private void checkLight(Ecosystem ecosystem){
 
 		if (ecosystem.getLightLevel() > dna.getLightThresh()){
-			starvation++;
+			int excess = Math.abs(ecosystem.getLightLevel() - dna.getLightThresh());
+			if (checkProbability(excess)){
+				starvation++;
+			}
 		}
 		else if (ecosystem.getLightLevel() < dna.getDarkThresh()){
-			starvation++;
+			int excess = Math.abs(ecosystem.getLightLevel() - dna.getDarkThresh());
+			if (checkProbability(excess)){
+				starvation++;
+			}
 		}
 	}
 
 	private void checkTemperature(Ecosystem ecosystem){
 
 		if (ecosystem.getTemperature() > dna.getHotThresh()){
-			starvation++;
+			int excess = Math.abs(ecosystem.getTemperature() - dna.getHotThresh());
+			if (checkProbability(excess)){
+				starvation++;
+			}
 		}
-		else if (ecosystem.getTemperature() < dna.getColdThresh()){
-			starvation++;
+		else if (ecosystem.getTemperature() < dna.getColdThresh()) {
+			int excess = Math.abs(ecosystem.getTemperature() - dna.getColdThresh());
+			if (checkProbability(excess)){
+				starvation++;
+			}
 		}
 	}
 
@@ -97,6 +112,12 @@ public class Plant {
 		}
 	}
 
+	private boolean checkProbability(int excess){
+
+		int probability = (int)(Math.random() * 100);
+		return (probability + excess) > 90;
+	}
+
 	public int getAge() {
 		return age;
 	}
@@ -113,9 +134,14 @@ public class Plant {
 		return starvation;
 	}
 
+	public DNA getDna() {
+		return dna;
+	}
+
 	@Override
 	public String toString() {
-		return "Plant{" +
+
+		return "engine.Plant{" +
 						       "age=" + age +
 						       ", height=" + height +
 						       ", starvation=" + starvation +
